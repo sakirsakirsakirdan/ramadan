@@ -51,8 +51,9 @@ const prayerTimeIds = {
 /* ─── DURUM ─────────────────────────────────────────────── */
 
 let prayerData = null;
-let activeCity = "Istanbul";
+let activeCity = localStorage.getItem("savedCity") || "Istanbul";
 let countdownId = null;   // setInterval handle — temizlemek için
+
 
 // Gösterilen ay: { year, month (1-indexed) }
 const now = new Date();
@@ -70,6 +71,14 @@ document.addEventListener("DOMContentLoaded", () => {
 /* ─── KOD/LOKASYOn ──────────────────────────────────────── */
 
 function init() {
+  // Kayıtlı şehir varsa direkt yükle, konuma gitme
+  const savedCity = localStorage.getItem("savedCity");
+  if (savedCity) {
+    setLocation(`<i class="fas fa-map-marker-alt me-1"></i>${savedCity}`);
+    loadData(savedCity, "Turkey");
+    return;
+  }
+
   if (!navigator.geolocation) {
     setLocation("Konum desteklenmiyor.");
     loadData(activeCity, "Turkey");
@@ -298,6 +307,7 @@ function filterCities(val) { buildCityGrid(val); }
 
 function selectCity(city) {
   activeCity = city;
+  localStorage.setItem("savedCity", city); // 💾 Kaydet
 
   // Modalı kapat
   const modalEl = document.getElementById("cityModal");
