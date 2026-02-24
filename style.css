@@ -315,3 +315,941 @@ body {
 .btn-nav-month:active {
   transform: scale(0.95);
 }
+
+/* Info Chips (Hicri Tarih & Ramazan Günü) */
+.info-chip {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(197, 160, 89, 0.1);
+  border: 1px solid rgba(197, 160, 89, 0.25);
+  color: var(--accent-gold-light);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.35rem 0.9rem;
+  border-radius: 50px;
+  letter-spacing: 0.3px;
+}
+
+/* İftar Alarmı Butonu */
+.btn-alarm {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ccc;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.45rem 1.2rem;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-alarm:hover {
+  background: rgba(255, 100, 100, 0.15);
+  border-color: rgba(255, 100, 100, 0.5);
+  color: #ff9999;
+}
+
+.btn-alarm.alarm-on {
+  background: rgba(255, 80, 80, 0.2);
+  border-color: #ff6464;
+  color: #ff9999;
+  animation: bell-shake 2s infinite;
+}
+
+@keyframes bell-shake {
+
+  0%,
+  90%,
+  100% {
+    transform: rotate(0);
+  }
+
+  92% {
+    transform: rotate(-8deg);
+  }
+
+  96% {
+    transform: rotate(8deg);
+  }
+}
+
+/* Floating Tesbih Butonu */
+.tesbih-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(197, 160, 89, 0.2);
+  border: 2px solid rgba(197, 160, 89, 0.5);
+  font-size: 1.6rem;
+  cursor: pointer;
+  z-index: 9999;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tesbih-btn:hover {
+  background: rgba(197, 160, 89, 0.35);
+  transform: scale(1.1) rotate(15deg);
+  box-shadow: 0 6px 25px rgba(197, 160, 89, 0.3);
+}
+
+/* Tesbih Sayacı */
+.tesbih-count {
+  font-size: 5rem;
+  font-weight: 800;
+  color: var(--accent-gold-light);
+  line-height: 1;
+}
+
+.tesbih-ring {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(197, 160, 89, 0.2), rgba(197, 160, 89, 0.05));
+  border: 3px solid rgba(197, 160, 89, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent-gold-light);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 0 30px rgba(197, 160, 89, 0.15);
+  user-select: none;
+}
+
+.tesbih-ring:active {
+  transform: scale(0.92);
+  background: radial-gradient(circle, rgba(197, 160, 89, 0.4), rgba(197, 160, 89, 0.1));
+  box-shadow: 0 0 40px rgba(197, 160, 89, 0.35);
+}
+
+/* ─── GÜNLÜK İBADET TAKİBİ ─────────────────────────────── */
+.tracker-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 0.6rem 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.tracker-item:hover {
+  background: rgba(197, 160, 89, 0.08);
+  border-color: rgba(197, 160, 89, 0.2);
+}
+
+.tracker-item.done {
+  background: rgba(197, 160, 89, 0.15);
+  border-color: rgba(197, 160, 89, 0.4);
+}
+
+.tracker-item.done .tracker-icon {
+  color: var(--accent-gold);
+}
+
+.tracker-icon {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.25);
+  transition: color 0.2s;
+}
+
+.tracker-label {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #ccc;
+}
+
+.tracker-item.done .tracker-label {
+  color: var(--accent-gold-light);
+}
+
+.tracker-progress-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 50px;
+  overflow: hidden;
+}
+
+.tracker-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #c5a059, #f0d080);
+  border-radius: 50px;
+  transition: width 0.4s ease;
+}
+
+/* ─── KIBL E PUSULASI ───────────────────────────────────── */
+.compass-wrap {
+  width: 160px;
+  height: 160px;
+  position: relative;
+}
+
+.compass-dial {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 2px solid rgba(197, 160, 89, 0.35);
+  background: radial-gradient(circle, rgba(197, 160, 89, 0.05), rgba(10, 20, 40, 0.6));
+  position: relative;
+  box-shadow: 0 0 30px rgba(197, 160, 89, 0.1), inset 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+.compass-needle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 60px;
+  margin-left: -2px;
+  margin-top: -55px;
+  transform-origin: bottom center;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(to top, rgba(197, 160, 89, 0.3), #f0d080);
+  transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 8px rgba(240, 208, 128, 0.5);
+}
+
+.compass-needle::after {
+  content: "🕋";
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1rem;
+}
+
+.compass-n,
+.compass-s,
+.compass-e,
+.compass-w {
+  position: absolute;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: rgba(197, 160, 89, 0.7);
+}
+
+.compass-n {
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.compass-s {
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.compass-e {
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.compass-w {
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* ─── GÜNÜN DUASI ────────────────────────────────────────── */
+.dua-arabic {
+  font-size: 1.3rem;
+  color: var(--accent-gold-light);
+  line-height: 2;
+  font-family: "Amiri", "Scheherazade New", serif;
+  direction: rtl;
+  text-shadow: 0 0 12px rgba(197, 160, 89, 0.3);
+}
+
+/* ─── HAVA DURUMU ────────────────────────────────────────── */
+.weather-temp {
+  font-size: 4rem;
+  font-weight: 800;
+  color: var(--accent-gold-light);
+  line-height: 1;
+}
+
+.weather-desc {
+  font-size: 1rem;
+  color: #ccc;
+  margin-top: 0.3rem;
+}
+
+.weather-detail {
+  font-size: 0.9rem;
+  color: #eee;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 0.7rem 0.3rem;
+  text-align: center;
+}
+
+.weather-emoji {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+/* ─── DÜNYA İFTAR SAATLERİ ──────────────────────────────── */
+.world-iftar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 0.65rem 1rem;
+  transition: background 0.2s;
+}
+
+.world-iftar-row:hover {
+  background: rgba(197, 160, 89, 0.07);
+  border-color: rgba(197, 160, 89, 0.2);
+}
+
+.world-city-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ddd;
+}
+
+.world-city-flag {
+  font-size: 1.2rem;
+  margin-right: 0.5rem;
+}
+
+.world-iftar-time {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--accent-gold-light);
+}
+
+/* ─── RAMAZAN AY TAKVİMİ ─────────────────────────────────── */
+.ramazan-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 6px;
+}
+
+@media (max-width: 600px) {
+  .ramazan-cal-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+.cal-day {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: default;
+  transition: transform 0.2s;
+  position: relative;
+}
+
+.cal-day:hover {
+  transform: scale(1.15);
+}
+
+.cal-day.past {
+  background: rgba(197, 160, 89, 0.25);
+  border: 1px solid rgba(197, 160, 89, 0.4);
+  color: var(--accent-gold-light);
+}
+
+.cal-day.today {
+  background: linear-gradient(135deg, #c5a059, #f0d080);
+  color: #0d1b2a;
+  font-weight: 800;
+  box-shadow: 0 0 16px rgba(197, 160, 89, 0.5);
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+.cal-day.future {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.25);
+}
+
+@keyframes glow-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 16px rgba(197, 160, 89, 0.5);
+  }
+
+  50% {
+    box-shadow: 0 0 28px rgba(197, 160, 89, 0.85);
+  }
+}
+
+/* Legend */
+.cal-legend {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.cal-legend.cal-done {
+  background: rgba(197, 160, 89, 0.5);
+}
+
+.cal-legend.cal-today {
+  background: linear-gradient(135deg, #c5a059, #f0d080);
+}
+
+.cal-legend.cal-future {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* ─── BAYRAM KARTI ───────────────────────────────────────── */
+.bayram-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: linear-gradient(135deg, rgba(197, 160, 89, 0.12), rgba(197, 160, 89, 0.04));
+  border: 1px solid rgba(197, 160, 89, 0.3);
+  border-radius: 16px;
+  padding: 1rem 1.2rem;
+}
+
+.bayram-icon {
+  font-size: 2.4rem;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 8px rgba(197, 160, 89, 0.4));
+}
+
+.bayram-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent-gold-light);
+  margin-bottom: 0.2rem;
+}
+
+.bayram-dates {
+  font-size: 0.8rem;
+  color: #bbb;
+  margin-bottom: 0.4rem;
+}
+
+.badge-tatil {
+  display: inline-block;
+  background: rgba(197, 160, 89, 0.2);
+  border: 1px solid rgba(197, 160, 89, 0.4);
+  color: var(--accent-gold-light);
+  font-size: 0.68rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 50px;
+  margin-left: 0.4rem;
+  font-weight: 600;
+}
+
+.bayram-countdown {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.bayram-countdown.geçti {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.bayram-schedule {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.schedule-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.78rem;
+  color: #ccc;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.schedule-row:last-child {
+  border-bottom: none;
+}
+
+.schedule-row:first-child {
+  background: rgba(197, 160, 89, 0.08);
+  color: var(--accent-gold-light);
+  font-weight: 600;
+}
+
+/* ─── DÜNYA İFTAR (Grid Layout) ─────────────────────────── */
+.world-iftar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  height: 100%;
+  transition: background 0.2s;
+}
+
+.world-iftar-row:hover {
+  background: rgba(197, 160, 89, 0.08);
+  border-color: rgba(197, 160, 89, 0.25);
+}
+
+.world-city-flag {
+  font-size: 1.3rem;
+  margin-right: 0.5rem;
+}
+
+.world-city-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ddd;
+}
+
+.world-iftar-time {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent-gold-light);
+}
+
+/* ─── KADİR GECESİ KARTI ────────────────────────────────── */
+.kadir-card {
+  background: linear-gradient(135deg,
+      rgba(80, 20, 120, 0.55) 0%,
+      rgba(20, 15, 60, 0.7) 50%,
+      rgba(197, 160, 89, 0.15) 100%);
+  border: 1px solid rgba(160, 100, 220, 0.4);
+  box-shadow: 0 0 40px rgba(150, 80, 220, 0.15), 0 8px 32px rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.kadir-card::before {
+  content: "✨";
+  position: absolute;
+  font-size: 8rem;
+  opacity: 0.05;
+  top: -20px;
+  right: -10px;
+  pointer-events: none;
+}
+
+.kadir-countdown {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #e8d0ff;
+  letter-spacing: 1px;
+  text-shadow: 0 0 20px rgba(180, 120, 255, 0.5);
+}
+
+/* ─── EZAN BUTONU ────────────────────────────────────────── */
+.btn-ezan {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: linear-gradient(135deg, rgba(150, 80, 220, 0.25), rgba(197, 160, 89, 0.15));
+  border: 1px solid rgba(160, 100, 220, 0.5);
+  border-radius: 20px;
+  padding: 1.2rem 2rem;
+  color: #e8d0ff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 160px;
+}
+
+.btn-ezan:hover {
+  background: linear-gradient(135deg, rgba(150, 80, 220, 0.4), rgba(197, 160, 89, 0.25));
+  border-color: rgba(180, 130, 255, 0.7);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(150, 80, 220, 0.3);
+}
+
+.btn-ezan:active {
+  transform: scale(0.97);
+}
+
+.btn-ezan span:first-child {
+  font-size: 2rem;
+}
+
+.btn-ezan.playing {
+  background: linear-gradient(135deg, rgba(197, 160, 89, 0.3), rgba(150, 80, 220, 0.2));
+  border-color: rgba(197, 160, 89, 0.6);
+  animation: ezan-glow 1.5s ease-in-out infinite;
+}
+
+@keyframes ezan-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 12px rgba(197, 160, 89, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 28px rgba(197, 160, 89, 0.6);
+  }
+}
+
+/* ─── 30 CÜZ HATEM TAKİBİ ───────────────────────────────── */
+.cuz-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 6px;
+}
+
+@media (max-width: 600px) {
+  .cuz-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+.cuz-item {
+  aspect-ratio: 1;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.3);
+  user-select: none;
+}
+
+.cuz-item:hover {
+  transform: scale(1.1);
+  border-color: rgba(197, 160, 89, 0.3);
+}
+
+.cuz-item.okundu {
+  background: linear-gradient(135deg, rgba(197, 160, 89, 0.25), rgba(197, 160, 89, 0.1));
+  border-color: rgba(197, 160, 89, 0.5);
+  color: var(--accent-gold-light);
+  box-shadow: 0 0 8px rgba(197, 160, 89, 0.15);
+}
+
+.cuz-num {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.cuz-icon {
+  font-size: 0.7rem;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+/* ─── BİLGİ KARTI ───────────────────────────────────────── */
+.bilgi-scroll-wrap {
+  overflow-x: auto;
+  padding-bottom: 8px;
+  /* gizli scrollbar ama kaydırılabilir */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(197, 160, 89, 0.3) transparent;
+}
+
+.bilgi-scroll-wrap::-webkit-scrollbar {
+  height: 4px;
+}
+
+.bilgi-scroll-wrap::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.bilgi-scroll-wrap::-webkit-scrollbar-thumb {
+  background: rgba(197, 160, 89, 0.35);
+  border-radius: 2px;
+}
+
+.bilgi-cards-row {
+  display: flex;
+  gap: 14px;
+  width: max-content;
+  padding: 4px 2px 8px;
+  transition: transform 0.4s ease;
+}
+
+.bilgi-card {
+  width: 240px;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 1.3rem 1.2rem;
+  cursor: default;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.bilgi-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 18px 18px 0 0;
+}
+
+.bilgi-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.055);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.bilgi-card-icon {
+  font-size: 2rem;
+  margin-bottom: 0.7rem;
+  display: block;
+}
+
+.bilgi-card-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent-gold-light);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.bilgi-card-text {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* Renkli üst şerit — her kart farklı renk */
+.bilgi-card:nth-child(1)::before {
+  background: linear-gradient(90deg, #c5a059, #f0d080);
+}
+
+.bilgi-card:nth-child(2)::before {
+  background: linear-gradient(90deg, #6a4cff, #a78bfa);
+}
+
+.bilgi-card:nth-child(3)::before {
+  background: linear-gradient(90deg, #059669, #34d399);
+}
+
+.bilgi-card:nth-child(4)::before {
+  background: linear-gradient(90deg, #dc2626, #f87171);
+}
+
+.bilgi-card:nth-child(5)::before {
+  background: linear-gradient(90deg, #0284c7, #38bdf8);
+}
+
+.bilgi-card:nth-child(6)::before {
+  background: linear-gradient(90deg, #d97706, #fbbf24);
+}
+
+.bilgi-card:nth-child(7)::before {
+  background: linear-gradient(90deg, #7c3aed, #c084fc);
+}
+
+.bilgi-card:nth-child(8)::before {
+  background: linear-gradient(90deg, #0f766e, #2dd4bf);
+}
+
+.bilgi-card:nth-child(9)::before {
+  background: linear-gradient(90deg, #b45309, #fcd34d);
+}
+
+.bilgi-card:nth-child(10)::before {
+  background: linear-gradient(90deg, #be185d, #f472b6);
+}
+
+/* ─── DUA & SURE KÜTÜPHANESİ ────────────────────────────── */
+.dua-search {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50px;
+  padding: 0.45rem 1.1rem;
+  color: #fff;
+  font-size: 0.85rem;
+  outline: none;
+  width: 220px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.dua-search::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.dua-search:focus {
+  border-color: rgba(197, 160, 89, 0.5);
+  background: rgba(197, 160, 89, 0.06);
+}
+
+.dua-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.dua-tab {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  padding: 0.4rem 1rem;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dua-tab:hover {
+  background: rgba(197, 160, 89, 0.1);
+  color: var(--accent-gold-light);
+  border-color: rgba(197, 160, 89, 0.3);
+}
+
+.dua-tab.active {
+  background: rgba(197, 160, 89, 0.18);
+  border-color: rgba(197, 160, 89, 0.5);
+  color: var(--accent-gold-light);
+}
+
+.dua-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dua-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.dua-item:hover {
+  border-color: rgba(197, 160, 89, 0.2);
+}
+
+.dua-item.open {
+  border-color: rgba(197, 160, 89, 0.35);
+}
+
+.dua-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.1rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.dua-item-name {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #ddd;
+}
+
+.dua-item.open .dua-item-name {
+  color: var(--accent-gold-light);
+}
+
+.dua-item-icon {
+  font-size: 1.1rem;
+}
+
+.dua-chevron {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.75rem;
+  transition: transform 0.3s;
+}
+
+.dua-item.open .dua-chevron {
+  transform: rotate(180deg);
+  color: var(--accent-gold);
+}
+
+.dua-item-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+
+.dua-item.open .dua-item-body {
+  max-height: 600px;
+}
+
+.dua-item-content {
+  padding: 0 1.1rem 1.1rem;
+}
+
+.dua-arabic-text {
+  font-size: 1.4rem;
+  direction: rtl;
+  text-align: right;
+  color: var(--accent-gold-light);
+  line-height: 2.2;
+  margin-bottom: 0.8rem;
+  font-family: "Amiri", serif;
+  text-shadow: 0 0 10px rgba(197, 160, 89, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 0.8rem;
+}
+
+.dua-latin {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  margin-bottom: 0.6rem;
+  line-height: 1.7;
+}
+
+.dua-meaning {
+  font-size: 0.83rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
+}
+
+.dua-source {
+  font-size: 0.75rem;
+  color: rgba(197, 160, 89, 0.65);
+  font-weight: 600;
+}
