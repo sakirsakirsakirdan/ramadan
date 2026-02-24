@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🌙 Ramazan Rehberi | Akıllı Randevu Sistemi</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <div class="background-overlay"></div>
+  <div class="background-glow"></div>
+
+  <div class="container py-5 content-wrapper">
+
+    <header class="text-center mb-5 animate-in">
+      <h1 class="display-4 fw-bold main-title mb-2">
+        <i class="fas fa-moon me-2"></i>RAMAZAN REHBERİ
+      </h1>
+      <p class="lead text-gold opacity-75">Hayırlı Ramazanlar dileriz.</p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+
+      <!-- GERİ SAYIM -->
+      <div class="col-12 col-lg-10 mb-2 animate-in">
+        <div class="card countdown-card glass-panel border-0">
+          <div class="card-body p-4 p-md-5 text-center">
+            <h2 class="h6 text-uppercase tracking-widest text-gold mb-3">
+              <i class="fas fa-hourglass-start me-2"></i>İftara Kalan Süre
+            </h2>
+            <div id="countdown" class="countdown-timer">--:--:--</div>
+
+            <div class="progress-box mx-auto mt-4" style="max-width: 600px;">
+              <div class="progress rounded-pill glass-progress" style="height: 12px;">
+                <div id="iftarProgress" class="progress-bar bg-gradient-gold" role="progressbar" style="width: 0%">
+                </div>
+              </div>
+            </div>
+            <p id="locationText" class="small mt-3 text-muted">
+              <i class="fas fa-location-dot me-1"></i>Konum bilgisi bekleniyor...
+            </p>
+            <button class="btn btn-city mt-2" data-bs-toggle="modal" data-bs-target="#cityModal">
+              <i class="fas fa-city me-2"></i>Şehir Değiştir
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- VAKİTLER -->
+      <div class="col-12 animate-in">
+        <div class="card glass-panel border-0">
+          <div class="card-body p-4">
+            <h3 class="h5 mb-4 text-center text-gold text-uppercase tracking-wider">
+              <i class="fas fa-calendar-day me-2"></i>Günün Namaz Vakitleri
+            </h3>
+            <div class="row g-3 text-center">
+              <!-- Imsak -->
+              <div class="col-6 col-md-4 col-lg-2">
+                <div class="time-item glass-item">
+                  <span class="label">İmsak</span>
+                  <span class="time" id="fajrTime">--:--</span>
+                </div>
+              </div>
+              <!-- Güneş -->
+              <div class="col-6 col-md-4 col-lg-2">
+                <div class="time-item glass-item">
+                  <span class="label">Güneş</span>
+                  <span class="time" id="sunriseTime">--:--</span>
+                </div>
+              </div>
+              <!-- Öğle -->
+              <div class="col-6 col-md-4 col-lg-2">
+                <div class="time-item glass-item">
+                  <span class="label">Öğle</span>
+                  <span class="time" id="dhuhrTime">--:--</span>
+                </div>
+              </div>
+              <!-- İkindi -->
+              <div class="col-6 col-md-4 col-lg-2">
+                <div class="time-item glass-item">
+                  <span class="label">İkindi</span>
+                  <span class="time" id="asrTime">--:--</span>
+                </div>
+              </div>
+              <!-- Akşam (İftar) -->
+              <div class="col-6 col-md-4 col-lg-2">
+                <div class="time-item glass-item active-time">
+                  <span class="label">Akşam</span>
+                  <span class="time" id="maghribTime">--:--</span>
+                </div>
+              </div>
+              <!-- Yatsı -->
+              <div class="col-6 col-md-4 col-lg-2">
+                <div class="time-item glass-item">
+                  <span class="label">Yatsı</span>
+                  <span class="time" id="ishaTime">--:--</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BİLGİ KARTLARI -->
+      <div class="col-md-6 animate-in">
+        <div class="card glass-panel border-0 h-100">
+          <div class="card-body p-4">
+            <h4 class="h5 mb-3 text-gold">
+              <i class="fas fa-info-circle me-2"></i>Ramazan Ayı
+            </h4>
+            <p class="small text-muted mb-0" style="line-height: 1.6;">
+              Ramazan, nefsimizi terbiye ettiğimiz, sabrı ve şükrü öğrendiğimiz,
+              paylaşmanın ve kardeşliğin en üst seviyeye çıktığı mübarek bir aydır.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 animate-in">
+        <div class="card glass-panel border-0 h-100">
+          <div class="card-body p-4">
+            <h4 class="h5 mb-3 text-gold">
+              <i class="fas fa-heart me-2"></i>Orucun Özü
+            </h4>
+            <p class="small text-muted mb-0" style="line-height: 1.6;">
+              Oruç sadece mideden değil, dilden, elden ve gözden haramı uzaklaştırmaktır.
+              Manevi bir arınma ve ruhsal bir disiplin yolculuğudur.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- AYLIK İMSAKİYE -->
+      <div class="col-12 animate-in mt-4">
+        <div class="card glass-panel border-0">
+          <div class="card-body p-4">
+
+            <!-- Başlık + Ay Navigasyonu -->
+            <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+              <h3 class="h5 text-gold text-uppercase mb-0">
+                <i class="fas fa-list-check me-2"></i>İmsakiye
+              </h3>
+              <div class="d-flex align-items-center gap-3">
+                <button class="btn-nav-month" onclick="changeMonth(-1)" title="Önceki Ay">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <span id="monthLabel" class="text-gold fw-bold"
+                  style="min-width:130px;text-align:center;font-size:1rem;"></span>
+                <button class="btn-nav-month" onclick="changeMonth(1)" title="Sonraki Ay">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-dark table-hover mb-0 custom-table">
+                <thead class="text-gold small text-uppercase">
+                  <tr>
+                    <th>Tarih</th>
+                    <th>İmsak</th>
+                    <th>Güneş</th>
+                    <th>Öğle</th>
+                    <th>İkindi</th>
+                    <th>Akşam</th>
+                    <th>Yatsı</th>
+                  </tr>
+                </thead>
+                <tbody id="imsakiyeBody" class="small">
+                  <tr>
+                    <td colspan="7" class="text-center py-4 text-muted">Vakitler yükleniyor...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <footer class="mt-5 pt-4 text-center border-top border-secondary border-opacity-25 animate-in">
+      <p class="small text-muted mb-0">&copy; 2024 Akıllı Randevu Sistemi</p>
+    </footer>
+
+  </div>
+
+  <!-- Şehir Seçici Modal -->
+  <div class="modal fade" id="cityModal" tabindex="-1" aria-labelledby="cityModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content city-modal-content">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title text-gold" id="cityModalLabel">
+            <i class="fas fa-city me-2"></i>Şehir Seç
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+        </div>
+        <div class="modal-body pt-3">
+          <input type="text" id="citySearch" class="form-control city-search mb-4" placeholder="🔍  Şehir ara..."
+            oninput="filterCities(this.value)">
+          <div class="row g-2" id="cityGrid">
+            <!-- JS tarafından doldurulacak -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>

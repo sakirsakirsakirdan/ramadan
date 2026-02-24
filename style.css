@@ -1,0 +1,317 @@
+:root {
+  --primary-deep: #050a14;
+  --secondary-teal: #0d1b2a;
+  --accent-gold: #c5a059;
+  --accent-gold-light: #e0c08d;
+  --text-primary: #ffffff;
+  --text-muted: #a0aec0;
+  --glass-bg: rgba(15, 23, 42, 0.7);
+  --glass-border: rgba(197, 160, 89, 0.2);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--primary-deep);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Background Effect */
+.background-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  background: linear-gradient(135deg, #050a14 0%, #0d1b2a 50%, #1b263b 100%);
+}
+
+.background-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 80% 20%, rgba(197, 160, 89, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 20% 80%, rgba(197, 160, 89, 0.05) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+/* Container */
+.content-wrapper {
+  position: relative;
+  z-index: 10;
+}
+
+/* Typography */
+.main-title {
+  color: var(--accent-gold);
+  letter-spacing: 2px;
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.text-gold {
+  color: var(--accent-gold-light);
+}
+
+/* Glass Panels */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.glass-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.glass-item:hover {
+  background: rgba(197, 160, 89, 0.1);
+  border-color: var(--accent-gold);
+}
+
+.active-time {
+  background: rgba(197, 160, 89, 0.15);
+  border-color: var(--accent-gold) !important;
+  box-shadow: 0 0 15px rgba(197, 160, 89, 0.2);
+}
+
+.time-item .label {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.time-item .time {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent-gold-light);
+}
+
+/* Countdown */
+.countdown-timer {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+  margin: 1rem 0;
+}
+
+/* Progress Bar */
+.glass-progress {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.bg-gradient-gold {
+  background: linear-gradient(90deg, #c5a059, #e0c08d) !important;
+}
+
+/* Table Styles — Bootstrap tablosu üzerine zorla açık renk yaz */
+.custom-table,
+.custom-table thead,
+.custom-table tbody,
+.custom-table tr,
+.custom-table th,
+.custom-table td {
+  background: transparent !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+.custom-table thead th {
+  border-bottom: 2px solid var(--glass-border) !important;
+  padding: 1rem 1.25rem !important;
+  font-weight: 700;
+  background: rgba(197, 160, 89, 0.08) !important;
+  color: var(--accent-gold-light) !important;
+}
+
+.custom-table tbody td {
+  padding: 0.85rem 1.25rem !important;
+  vertical-align: middle;
+}
+
+.custom-table tbody tr:hover td {
+  background: rgba(197, 160, 89, 0.06) !important;
+}
+
+.today-row td {
+  background: rgba(197, 160, 89, 0.15) !important;
+  border-left: 4px solid var(--accent-gold) !important;
+}
+
+.text-muted {
+  color: #8898a8 !important;
+}
+
+/* Animations */
+.animate-in {
+  animation: fadeInBlur 1s ease-out forwards;
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes fadeInBlur {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .countdown-timer {
+    font-size: 2.2rem;
+  }
+
+  .time-item .time {
+    font-size: 1.2rem;
+  }
+}
+
+/* Şehir Değiştir Butonu */
+.btn-city {
+  background: rgba(197, 160, 89, 0.15);
+  border: 1px solid rgba(197, 160, 89, 0.4);
+  color: var(--accent-gold-light);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.45rem 1.2rem;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+}
+
+.btn-city:hover {
+  background: rgba(197, 160, 89, 0.3);
+  border-color: var(--accent-gold);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(197, 160, 89, 0.25);
+}
+
+/* Şehir Modal */
+.city-modal-content {
+  background: #0d1b2a;
+  border: 1px solid rgba(197, 160, 89, 0.25);
+  border-radius: 20px;
+  color: #fff;
+}
+
+.city-search {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(197, 160, 89, 0.3) !important;
+  color: #fff !important;
+  border-radius: 12px !important;
+  padding: 0.75rem 1rem !important;
+}
+
+.city-search::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.city-search:focus {
+  background: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.2) !important;
+  border-color: var(--accent-gold) !important;
+  outline: none;
+}
+
+.city-btn {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #ddd;
+  border-radius: 10px;
+  padding: 0.6rem 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-align: center;
+}
+
+.city-btn:hover {
+  background: rgba(197, 160, 89, 0.2);
+  border-color: var(--accent-gold);
+  color: var(--accent-gold-light);
+  transform: translateY(-1px);
+}
+
+.city-btn.active-city {
+  background: rgba(197, 160, 89, 0.25);
+  border-color: var(--accent-gold);
+  color: var(--accent-gold-light);
+  font-weight: 700;
+}
+
+/* Ay Navigasyon Butonları */
+.btn-nav-month {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(197, 160, 89, 0.12);
+  border: 1px solid rgba(197, 160, 89, 0.35);
+  color: var(--accent-gold-light);
+  border-radius: 50%;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+}
+
+.btn-nav-month:hover {
+  background: rgba(197, 160, 89, 0.3);
+  border-color: var(--accent-gold);
+  color: #fff;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(197, 160, 89, 0.2);
+}
+
+.btn-nav-month:active {
+  transform: scale(0.95);
+}
