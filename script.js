@@ -74,6 +74,7 @@ function init() {
   // Kayıtlı şehir varsa direkt yükle, konuma gitme
   const savedCity = localStorage.getItem("savedCity");
   if (savedCity) {
+    activeCity = savedCity;
     setLocation(`<i class="fas fa-map-marker-alt me-1"></i>${savedCity}`);
     loadData(savedCity, "Turkey");
     return;
@@ -89,16 +90,53 @@ function init() {
 
   navigator.geolocation.getCurrentPosition(
     pos => {
-      setLocation('<i class="fas fa-check-circle me-1"></i>Konum alındı, vakitler yükleniyor...');
-      loadDataByCoords(pos.coords.latitude, pos.coords.longitude);
+      const { latitude: lat, longitude: lon } = pos.coords;
+      setLocation('<i class="fas fa-spinner fa-spin me-1"></i>Şehir tespit ediliyor...');
+
+      // OpenStreetMap Nominatim ile ters geocoding
+      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=tr`)
+        .then(r => r.json())
+        .then(geo => {
+          const addr = geo.address || {};
+          // Önce il, sonra ilçe, sonra şehir adını dene
+          const detected =
+            addr.province ||
+            addr.city ||
+            addr.county ||
+            addr.state ||
+            "Istanbul";
+
+          // Listemizde tam eşleşen şehri bul (Türkçe karakter toleranslı)
+          const match = TR_CITIES.find(c =>
+            c.name.toLowerCase().replace(/ı/g, "i").replace(/ğ/g, "g")
+              .replace(/ü/g, "u").replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c")
+            ===
+            detected.toLowerCase().replace(/ı/g, "i").replace(/ğ/g, "g")
+              .replace(/ü/g, "u").replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c")
+          );
+
+          const cityToUse = match ? match.name : detected;
+          activeCity = cityToUse;
+          localStorage.setItem("savedCity", cityToUse); // kaydet
+
+          setLocation(`<i class="fas fa-map-marker-alt me-1"></i>${cityToUse}`);
+          buildCityGrid(); // aktif şehiri güncelle
+          loadData(cityToUse, "Turkey");
+        })
+        .catch(() => {
+          // Geocoding başarısız → koordinata göre yükle
+          setLocation(`<i class="fas fa-location-dot me-1"></i>Konum alındı`);
+          loadDataByCoords(lat, lon);
+        });
     },
     err => {
-      setLocation(`<i class="fas fa-map-marker-alt me-1"></i>Konum izni yok — İstanbul gösteriliyor.`);
+      setLocation(`<i class="fas fa-exclamation-triangle me-1"></i>Konum izni yok — İstanbul gösteriliyor.`);
       loadData("Istanbul", "Turkey");
     },
-    { timeout: 8000 }
+    { timeout: 10000 }
   );
 }
+
 
 /* ─── VERİ YÜKLE ────────────────────────────────────────── */
 
