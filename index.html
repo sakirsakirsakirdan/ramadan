@@ -4,16 +4,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🌙 Ramazan Rehberi | Akıllı Randevu Sistemi</title>
+  <title>🌙 Ramazan Rehberi 2026 | Namaz Vakitleri, İftar & Sahur</title>
+  <meta name="description"
+    content="2026 Ramazan Rehberi: Namaz vakitleri, iftar saatleri, dua kütüphanesi, tesbih sayıcı ve çok daha fazlası.">
 
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Amiri:wght@400;700&display=swap"
+    rel="stylesheet">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <link rel="stylesheet" href="style.css" />
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 
 <body>
@@ -37,13 +43,16 @@
         <div class="card countdown-card glass-panel border-0">
           <div class="card-body p-4 p-md-5 text-center">
 
-            <!-- Hicri Tarih + Ramazan Günü -->
+            <!-- Hicri Tarih + Ramazan Günü + Ay Fazı -->
             <div class="d-flex justify-content-center gap-3 flex-wrap mb-4">
               <span class="info-chip" id="hijriDateChip">
                 <i class="fas fa-calendar-alt me-1"></i><span id="hijriDate">--</span>
               </span>
               <span class="info-chip" id="ramadanDayChip">
                 <i class="fas fa-star me-1"></i>Ramazan'ın <span id="ramadanDay">--</span>. Günü
+              </span>
+              <span class="info-chip" id="moonPhaseChip">
+                <span id="moonPhaseEmoji">🌙</span> <span id="moonPhaseName">Hesaplanıyor</span>
               </span>
             </div>
 
@@ -73,6 +82,9 @@
               </button>
               <button class="btn btn-alarm" id="alarmBtn" onclick="toggleAlarm()">
                 <i class="fas fa-bell me-2"></i>İftar Alarmı
+              </button>
+              <button class="btn btn-share" onclick="shareIftarTime()" id="shareBtn">
+                <i class="fas fa-share-nodes me-2"></i>Paylaş
               </button>
             </div>
           </div>
@@ -134,31 +146,74 @@
         </div>
       </div>
 
-      <!-- BİLGİ KARTLARI -->
+      <!-- HAVA DURUMU + İSTATİSTİK -->
       <div class="col-md-6 animate-in">
         <div class="card glass-panel border-0 h-100">
           <div class="card-body p-4">
             <h4 class="h5 mb-3 text-gold">
-              <i class="fas fa-info-circle me-2"></i>Ramazan Ayı
+              <i class="fas fa-cloud-sun me-2"></i>Hava Durumu
             </h4>
-            <p class="small text-muted mb-0" style="line-height: 1.6;">
-              Ramazan, nefsimizi terbiye ettiğimiz, sabrı ve şükrü öğrendiğimiz,
-              paylaşmanın ve kardeşliğin en üst seviyeye çıktığı mübarek bir aydır.
-            </p>
+            <div class="text-center mb-2">
+              <div class="weather-temp" id="weatherTemp">--</div>
+              <div class="weather-desc" id="weatherDesc">Yükleniyor...</div>
+            </div>
+            <div class="row g-2 mt-2">
+              <div class="col-4">
+                <div class="weather-detail">
+                  <div class="small text-muted">💧 Nem</div>
+                  <div class="fw-bold" id="weatherHumidity">--%</div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="weather-detail">
+                  <div class="small text-muted">💨 Rüzgar</div>
+                  <div class="fw-bold" id="weatherWind">-- km/s</div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="weather-detail">
+                  <div class="small text-muted">🌡️ Hissedilen</div>
+                  <div class="fw-bold" id="weatherFeels">--°C</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
+      <!-- RAMAZAN İSTATİSTİKLERİ -->
       <div class="col-md-6 animate-in">
         <div class="card glass-panel border-0 h-100">
           <div class="card-body p-4">
             <h4 class="h5 mb-3 text-gold">
-              <i class="fas fa-heart me-2"></i>Orucun Özü
+              <i class="fas fa-chart-pie me-2"></i>Ramazan Özeti
             </h4>
-            <p class="small text-muted mb-0" style="line-height: 1.6;">
-              Oruç sadece mideden değil, dilden, elden ve gözden haramı uzaklaştırmaktır.
-              Manevi bir arınma ve ruhsal bir disiplin yolculuğudur.
-            </p>
+            <div class="row g-2">
+              <div class="col-6">
+                <div class="stat-mini-card">
+                  <div class="stat-mini-val" id="statGecen">--</div>
+                  <div class="stat-mini-label">Geçen Gün</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="stat-mini-card">
+                  <div class="stat-mini-val" id="statKalan">--</div>
+                  <div class="stat-mini-label">Kalan Gün</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="stat-mini-card">
+                  <div class="stat-mini-val" id="statIbadet">--%</div>
+                  <div class="stat-mini-label">İbadet Skoru</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="stat-mini-card">
+                  <div class="stat-mini-val" id="statCuz">--/30</div>
+                  <div class="stat-mini-label">Cüz Tamamlandı</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -378,6 +433,23 @@
         </div>
       </div>
 
+      <!-- HAFTALIK İBADET ÖZETİ -->
+      <div class="col-12 animate-in">
+        <div class="card glass-panel border-0">
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+              <h3 class="h5 text-gold text-uppercase mb-0">
+                <i class="fas fa-calendar-week me-2"></i>Haftalık İbadet Özeti
+              </h3>
+              <span class="small text-muted">Son 7 Gün</span>
+            </div>
+            <div class="weekly-grid" id="weeklyGrid">
+              <!-- JS tarafından doldurulacak -->
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- KIBLe + GÜNÜN DUASI -->
       <div class="col-md-5 animate-in">
         <div class="card glass-panel border-0 h-100">
@@ -466,14 +538,32 @@
     </div>
 
     <footer class="mt-5 pt-4 text-center border-top border-secondary border-opacity-25 animate-in">
-      <p class="small text-muted mb-0">&copy; 2024 Akıllı Randevu Sistemi</p>
+      <p class="small text-muted mb-1">&copy; 2026 Ramazan Rehberi — Hayırlı Ramazanlar 🌙</p>
+      <p class="small text-muted mb-0" style="font-size:.72rem;opacity:.5;">Namaz vakitleri Aladhan API'den alınmaktadır
+      </p>
     </footer>
 
   </div>
 
+  <!-- Toast Bildirimi -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Namaz Vakti Bildirimi Panel (floating) -->
+  <div class="prayer-notify-panel" id="prayerNotifyPanel">
+    <div class="prayer-notify-inner">
+      <span id="prayerNotifyText">🕌 Namaz vakti yaklaşıyor!</span>
+      <button onclick="dismissPrayerNotify()" class="pray-dismiss">✕</button>
+    </div>
+  </div>
+
+  <!-- Scroll to Top -->
+  <button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Yukarı">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
   <!-- Tesbih Floating Button -->
   <button class="tesbih-btn" id="tesbihBtn" data-bs-toggle="modal" data-bs-target="#tesbihModal" title="Tesbih">
-    💿
+    �
   </button>
 
   <!-- Tesbih Modal -->
@@ -527,6 +617,8 @@
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="script.js"></script>
 </body>
 

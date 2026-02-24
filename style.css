@@ -1253,3 +1253,445 @@ body {
   color: rgba(197, 160, 89, 0.65);
   font-weight: 600;
 }
+
+/* ─── PAYLAŞ BUTONU ──────────────────────────────────────── */
+.btn-share {
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #7dd3fc;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.45rem 1.2rem;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-share:hover {
+  background: rgba(56, 189, 248, 0.25);
+  border-color: #38bdf8;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);
+}
+
+/* ─── STAT MİNİ KARTLAR ─────────────────────────────────── */
+.stat-mini-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 1rem 0.75rem;
+  text-align: center;
+  transition: all 0.25s ease;
+}
+
+.stat-mini-card:hover {
+  background: rgba(197, 160, 89, 0.1);
+  border-color: rgba(197, 160, 89, 0.3);
+  transform: translateY(-2px);
+}
+
+.stat-mini-val {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--accent-gold-light);
+  line-height: 1.1;
+  margin-bottom: 0.25rem;
+}
+
+.stat-mini-label {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+/* ─── HAFTALIK İBADET GRİDİ ─────────────────────────────── */
+.weekly-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 500px) {
+  .weekly-grid {
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+}
+
+.weekly-day-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.weekly-day-label {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.weekly-day-bar-wrap {
+  width: 100%;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  position: relative;
+}
+
+.weekly-day-bar {
+  width: 100%;
+  background: linear-gradient(to top, #c5a059, #f0d080);
+  border-radius: 0 0 8px 8px;
+  transition: height 0.6s ease;
+  min-height: 0;
+}
+
+.weekly-day-bar.today-bar {
+  background: linear-gradient(to top, #6a4cff, #a78bfa);
+  box-shadow: 0 0 12px rgba(106, 76, 255, 0.4);
+}
+
+.weekly-day-score {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 600;
+  text-align: center;
+}
+
+.weekly-day-col.today-col .weekly-day-label,
+.weekly-day-col.today-col .weekly-day-score {
+  color: #a78bfa;
+}
+
+/* ─── SCROLL TO TOP ──────────────────────────────────────── */
+.scroll-top-btn {
+  position: fixed;
+  bottom: 100px;
+  right: 30px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(197, 160, 89, 0.18);
+  border: 1px solid rgba(197, 160, 89, 0.4);
+  color: var(--accent-gold-light);
+  font-size: 0.9rem;
+  cursor: pointer;
+  z-index: 9998;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.scroll-top-btn.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.scroll-top-btn:hover {
+  background: rgba(197, 160, 89, 0.35);
+  transform: translateY(-3px);
+}
+
+/* ─── TOAST BİLDİRİM SİSTEMİ ─────────────────────────────── */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast-item {
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(197, 160, 89, 0.4);
+  border-radius: 14px;
+  padding: 0.85rem 1.2rem;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(16px);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  pointer-events: all;
+  animation: toastIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  min-width: 240px;
+  max-width: 320px;
+}
+
+.toast-item.toast-out {
+  animation: toastOut 0.3s ease forwards;
+}
+
+.toast-item.toast-success {
+  border-color: rgba(52, 211, 153, 0.5);
+}
+
+.toast-item.toast-info {
+  border-color: rgba(56, 189, 248, 0.5);
+}
+
+.toast-item.toast-warning {
+  border-color: rgba(251, 191, 36, 0.5);
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateX(60px) scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes toastOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+}
+
+/* ─── NAMAZ VAKTİ BİLDİRİM PANELİ ──────────────────────── */
+.prayer-notify-panel {
+  position: fixed;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99998;
+  transition: top 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  width: min(90vw, 420px);
+}
+
+.prayer-notify-panel.show {
+  top: 16px;
+}
+
+.prayer-notify-inner {
+  background: linear-gradient(135deg, rgba(80, 20, 120, 0.92), rgba(20, 15, 60, 0.95));
+  border: 1px solid rgba(160, 100, 220, 0.5);
+  border-radius: 16px;
+  padding: 0.9rem 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #e8d0ff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(150, 80, 220, 0.2);
+  gap: 1rem;
+}
+
+.pray-dismiss {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.pray-dismiss:hover {
+  color: #fff;
+}
+
+/* ─── AY FAZI CHİP ──────────────────────────────────────── */
+#moonPhaseChip {
+  background: rgba(106, 76, 255, 0.12);
+  border-color: rgba(106, 76, 255, 0.3);
+  color: #a78bfa;
+}
+
+/* ─── HAVA DURUMU GÜNCELLEMELERİ ────────────────────────── */
+.weather-temp {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--accent-gold-light);
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+.weather-emoji {
+  font-size: 2.5rem;
+}
+
+/* ─── NAMAZ VAKTİ AKTİF GÖSTERGESI ─────────────────────── */
+.next-prayer-row {
+  background: rgba(197, 160, 89, 0.08) !important;
+  border-left: 3px solid var(--accent-gold) !important;
+}
+
+.time-item .next-badge {
+  display: block;
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+/* ─── MOBİL DÜZENLEMELER ─────────────────────────────────── */
+@media (max-width: 480px) {
+  .scroll-top-btn {
+    right: 15px;
+    bottom: 90px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .tesbih-btn {
+    bottom: 20px;
+    right: 15px;
+    width: 52px;
+    height: 52px;
+  }
+
+  .toast-container {
+    right: 10px;
+    left: 10px;
+    top: 10px;
+  }
+
+  .toast-item {
+    min-width: unset;
+    max-width: 100%;
+  }
+
+  .weekly-day-bar-wrap {
+    height: 60px;
+  }
+}
+
+/* ─── HOŞ GELDİN RESMİ GELİŞMİŞ ─────────────────────────── */
+.welcome-img-container {
+  position: relative;
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 0 50px rgba(197, 160, 89, 0.5);
+  background: #000;
+  border: 2px solid rgba(197, 160, 89, 0.4);
+}
+
+.welcome-img-container img {
+  width: 100%;
+  max-height: 65vh;
+  display: block;
+  object-fit: contain;
+  opacity: 0.9;
+}
+
+.welcome-text-overlay {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-family: 'Amiri', serif;
+  font-size: clamp(2.2rem, 10vw, 5rem);
+  font-weight: 700;
+  text-shadow: 3px 3px 25px rgba(0, 0, 0, 1), 0 0 50px rgba(197, 160, 89, 1);
+  white-space: nowrap;
+  pointer-events: none;
+  width: 100%;
+  text-align: center;
+  z-index: 10;
+}
+
+.welcome-daily-content {
+  background: linear-gradient(to bottom, #0f172a, #020617);
+  padding: 2.5rem 1.5rem;
+  color: #e0c08d;
+  text-align: center;
+  border-top: 1px solid rgba(197, 160, 89, 0.3);
+}
+
+.welcome-daily-label {
+  font-size: 0.85rem;
+  color: #c5a059;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 1rem;
+  font-weight: 900;
+  opacity: 0.8;
+}
+
+.welcome-daily-text {
+  font-size: 1.4rem;
+  font-style: italic;
+  line-height: 1.7;
+  font-family: 'Inter', sans-serif;
+  color: #fff;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.swal2-close {
+  color: #c5a059 !important;
+  font-size: 3rem !important;
+  top: 15px !important;
+  right: 15px !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+  border-radius: 50% !important;
+  width: 50px !important;
+  height: 50px !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease !important;
+}
+
+.swal2-close:hover {
+  background: rgba(197, 160, 89, 0.2) !important;
+  color: #fff !important;
+  transform: rotate(90deg);
+}
+
+.swal-drop-down {
+  animation: dropSlideDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+}
+
+@keyframes dropSlideDown {
+  from {
+    transform: translateY(-120%) scale(0.9);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}

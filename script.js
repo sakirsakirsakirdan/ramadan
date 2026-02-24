@@ -71,71 +71,79 @@ document.addEventListener("DOMContentLoaded", () => {
 /* ─── KOD/LOKASYOn ──────────────────────────────────────── */
 
 function init() {
-  // Kayıtlı şehir varsa direkt yükle, konuma gitme
   const savedCity = localStorage.getItem("savedCity");
   if (savedCity) {
     activeCity = savedCity;
     setLocation(`<i class="fas fa-map-marker-alt me-1"></i>${savedCity}`);
-    loadData(savedCity, "Turkey");
+    loadData(savedCity, "TR");
     return;
   }
 
-  if (!navigator.geolocation) {
-    setLocation("Konum desteklenmiyor.");
-    loadData(activeCity, "Turkey");
-    return;
+  // Önce tarayıcı konumu dene
+  if (navigator.geolocation) {
+    setLocation('<i class="fas fa-spinner fa-spin me-1"></i>Konum alınıyor...');
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const { latitude: lat, longitude: lon } = pos.coords;
+        handleGeoSuccess(lat, lon);
+      },
+      () => loadByIP(), // Tarayıcı izni başarısız → IP üzerinden dene
+      { timeout: 7000 }
+    );
+  } else {
+    loadByIP();
   }
-
-  setLocation('<i class="fas fa-spinner fa-spin me-1"></i>Konum alınıyor...');
-
-  navigator.geolocation.getCurrentPosition(
-    pos => {
-      const { latitude: lat, longitude: lon } = pos.coords;
-      setLocation('<i class="fas fa-spinner fa-spin me-1"></i>Şehir tespit ediliyor...');
-
-      // OpenStreetMap Nominatim ile ters geocoding
-      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=tr`)
-        .then(r => r.json())
-        .then(geo => {
-          const addr = geo.address || {};
-          // Önce il, sonra ilçe, sonra şehir adını dene
-          const detected =
-            addr.province ||
-            addr.city ||
-            addr.county ||
-            addr.state ||
-            "Istanbul";
-
-          // Listemizde tam eşleşen şehri bul (Türkçe karakter toleranslı)
-          const match = TR_CITIES.find(c =>
-            c.name.toLowerCase().replace(/ı/g, "i").replace(/ğ/g, "g")
-              .replace(/ü/g, "u").replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c")
-            ===
-            detected.toLowerCase().replace(/ı/g, "i").replace(/ğ/g, "g")
-              .replace(/ü/g, "u").replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c")
-          );
-
-          const cityToUse = match ? match.name : detected;
-          activeCity = cityToUse;
-          localStorage.setItem("savedCity", cityToUse); // kaydet
-
-          setLocation(`<i class="fas fa-map-marker-alt me-1"></i>${cityToUse}`);
-          buildCityGrid(); // aktif şehiri güncelle
-          loadData(cityToUse, "Turkey");
-        })
-        .catch(() => {
-          // Geocoding başarısız → koordinata göre yükle
-          setLocation(`<i class="fas fa-location-dot me-1"></i>Konum alındı`);
-          loadDataByCoords(lat, lon);
-        });
-    },
-    err => {
-      setLocation(`<i class="fas fa-exclamation-triangle me-1"></i>Konum izni yok — İstanbul gösteriliyor.`);
-      loadData("Istanbul", "Turkey");
-    },
-    { timeout: 10000 }
-  );
 }
+
+function handleGeoSuccess(lat, lon) {
+  setLocation('<i class="fas fa-spinner fa-spin me-1"></i>Şehir tespit ediliyor...');
+  fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=tr`)
+    .then(r => r.json())
+    .then(geo => {
+      const addr = geo.address || {};
+      const detectedName = addr.province || addr.state || addr.city || addr.town || addr.village || "Istanbul";
+      processDetectedCity(detectedName, "Cihaz konumu");
+    })
+    .catch(() => loadDataByCoords(lat, lon));
+}
+
+function loadByIP() {
+  setLocation('<i class="fas fa-spinner fa-spin me-1"></i>İnternet üzerinden konum alınıyor...');
+  fetch('https://ipapi.co/json/')
+    .then(r => r.json())
+    .then(data => {
+      const city = data.city || "Istanbul";
+      processDetectedCity(city, "İnternet konumu");
+    })
+    .catch(() => {
+      processDetectedCity("Istanbul", "Varsayılan");
+    });
+}
+
+function processDetectedCity(rawName, sourceInfo) {
+  const searchName = rawName.toLowerCase()
+    .replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u")
+    .replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c")
+    .replace(" ili", "").replace(" belediyesi", "").trim();
+
+  const match = TR_CITIES.find(c => {
+    const cityName = c.name.toLowerCase()
+      .replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u")
+      .replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c");
+    return cityName === searchName || searchName.includes(cityName) || cityName.includes(searchName);
+  });
+
+  const cityToUse = match ? match.name : "Istanbul";
+  activeCity = cityToUse;
+  localStorage.setItem("savedCity", cityToUse);
+  setLocation(`<i class="fas fa-map-marker-alt me-1"></i>${cityToUse}`);
+  buildCityGrid();
+  loadData(cityToUse, "TR");
+
+  const icon = sourceInfo === "Cihaz konumu" ? "📍" : "🌍";
+  showToast(`${icon} ${cityToUse} tespit edildi (${sourceInfo}).`, "success");
+}
+
 
 
 /* ─── VERİ YÜKLE ────────────────────────────────────────── */
@@ -157,24 +165,39 @@ function loadDataByCoords(lat, lon) {
   loadCalendarByCoords(lat, lon);
 }
 
-function loadData(city, country) {
+function loadData(city, country = "TR") {
   prayerData = null;
+  // Diyanet metodu (13) ile dene
+  const url = `https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}&method=13`;
 
-  // Günlük vakit
   fetchJSON(
-    `https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}&method=13`,
+    url,
     d => {
       prayerData = d.data.timings;
       updateDailyUI(prayerData);
       restartCountdown();
       setLocation(`<i class="fas fa-map-marker-alt me-1"></i>${city}`);
-      // Hicri tarih ve Ramazan gününü güncelle
       updateHijri(d.data.date);
     },
-    () => showError("Günlük vakit alınamadı.")
+    err => {
+      console.warn("Diyanet API hatası, genel metoda (3) geçiliyor...", err);
+      // Fallback: Metod 3 (Muslim World League) ile tekrar dene
+      fetchJSON(
+        `https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}&method=3`,
+        d => {
+          prayerData = d.data.timings;
+          updateDailyUI(prayerData);
+          restartCountdown();
+          setLocation(`<i class="fas fa-map-marker-alt me-1"></i>${city} (Genel Vakit)`);
+          updateHijri(d.data.date);
+          showToast("Diyanet vakitlerine ulaşılamadı, genel vakitler yüklendi.", "warning");
+        },
+        () => showError(`Vakit bilgileri alınamadı. Lütfen internetinizi kontrol edip sayfayı yenileyin. (${city})`)
+      );
+    }
   );
 
-  // Aylık takvim
+  // Aylık takvimi de ülke koduyla yükle
   loadCalendarByCity(city, country);
 }
 
@@ -207,11 +230,23 @@ function loadCalendarByCity(city, country) {
 function fetchJSON(url, onSuccess, onError) {
   fetch(url)
     .then(r => {
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      if (!r.ok) {
+        console.error(`API Hatası: ${r.status} - ${url}`);
+        throw new Error(`HTTP ${r.status}`);
+      }
       return r.json();
     })
-    .then(onSuccess)
-    .catch(onError);
+    .then(data => {
+      if (data && (data.code === 200 || data.status === "OK")) {
+        onSuccess(data);
+      } else {
+        throw new Error(data.data || "Veri formatı hatalı");
+      }
+    })
+    .catch(err => {
+      console.error("Fetch Hatası:", err);
+      onError(err);
+    });
 }
 
 /* ─── UI GÜNCELLEYICILER ────────────────────────────────── */
@@ -311,16 +346,17 @@ function updateHijri(dateObj) {
   if (rdEl) {
     if (mon === 9) {
       rdEl.innerText = day;
-      // Ramazan takvimini doldur
       buildRamadanCalendar(day);
     } else {
       rdEl.innerText = "?";
       const chip = document.getElementById("ramadanDayChip");
       if (chip) chip.style.opacity = "0.4";
-      // Ramazan değil — bugünün hicri gününü genel takvimde göster
       buildRamadanCalendar(1);
     }
   }
+
+  // İstatistikleri de güncelle
+  updateRamadanStats(mon === 9 ? day : 1);
 }
 
 /* ─── İFTAR ALARMI ──────────────────────────────────────── */
@@ -329,18 +365,57 @@ let alarmOn = false;
 let alarmFired = false;
 
 function toggleAlarm() {
-  if (!alarmOn && "Notification" in window && Notification.permission === "default") {
-    Notification.requestPermission();
-  }
   alarmOn = !alarmOn;
   alarmFired = false;
   const btn = document.getElementById("alarmBtn");
+
   if (alarmOn) {
     btn.classList.add("alarm-on");
     btn.innerHTML = '<i class="fas fa-bell-slash me-2"></i>Alarm Açık';
+
+    // İzin durumuna göre SweetAlert ile bildir
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission().then(perm => {
+        if (perm === "granted") {
+          Swal.fire({
+            toast: true, position: "bottom-end", icon: "success",
+            title: "🔔 Bildirimler açık! İftar vakti haber vereceğiz.",
+            showConfirmButton: false, timer: 3500, timerProgressBar: true,
+            background: "#0d1b2a", color: "#e0c08d", iconColor: "#c5a059"
+          });
+        } else {
+          Swal.fire({
+            toast: true, position: "bottom-end", icon: "warning",
+            title: "Bildirim izni verilmedi — alarm sayfa içinde çalışır.",
+            showConfirmButton: false, timer: 4000, timerProgressBar: true,
+            background: "#0d1b2a", color: "#e0c08d", iconColor: "#f59e0b"
+          });
+        }
+      });
+    } else if ("Notification" in window && Notification.permission === "granted") {
+      Swal.fire({
+        toast: true, position: "bottom-end", icon: "success",
+        title: "⏰ İftar Alarmı aktif!",
+        showConfirmButton: false, timer: 2500, timerProgressBar: true,
+        background: "#0d1b2a", color: "#e0c08d", iconColor: "#c5a059"
+      });
+    } else {
+      Swal.fire({
+        toast: true, position: "bottom-end", icon: "info",
+        title: "⏰ İftar Alarmı aktif (sayfa içi).",
+        showConfirmButton: false, timer: 2500, timerProgressBar: true,
+        background: "#0d1b2a", color: "#e0c08d", iconColor: "#3b82f6"
+      });
+    }
   } else {
     btn.classList.remove("alarm-on");
     btn.innerHTML = '<i class="fas fa-bell me-2"></i>İftar Alarmı';
+    Swal.fire({
+      toast: true, position: "bottom-end", icon: "info",
+      title: "🔕 İftar Alarmı kapatıldı.",
+      showConfirmButton: false, timer: 2000, timerProgressBar: true,
+      background: "#0d1b2a", color: "#e0c08d", iconColor: "#6b7280"
+    });
   }
 }
 
@@ -409,6 +484,9 @@ function restartCountdown() {
 
   countdownId = setInterval(tick, 1000);
   tick();
+
+  // Yeni Özellik: Namaz Vakti Vurgulama
+  setTimeout(highlightNextPrayer, 400);
 }
 
 /* ─── TESBİH SAYACI ─────────────────────────────────────── */
@@ -502,7 +580,7 @@ function selectCity(city) {
 
   // Vakitleri yükle
   setLocation(`<i class="fas fa-spinner fa-spin me-1"></i>${city} vakitleri yükleniyor...`);
-  loadData(city, "Turkey");
+  loadData(city, "TR");
 
   // Hava durumunu güncelle
   loadWeather(city);
@@ -524,15 +602,34 @@ function parseTime(raw) {
 
 function pad(n) { return String(n).padStart(2, "0"); }
 
-function setLocation(html) { document.getElementById("locationText").innerHTML = html; }
-function showError(msg) { document.getElementById("countdown").innerText = msg; }
-function showTableLoading() {
-  document.getElementById("imsakiyeBody").innerHTML =
-    `<tr><td colspan="7" class="text-center py-4 text-muted"><i class="fas fa-spinner fa-spin me-2"></i>Yükleniyor...</td></tr>`;
+function setLocation(html) {
+  const el = document.getElementById("locationText");
+  if (el) el.innerHTML = html;
 }
+
+function showError(msg) {
+  const cd = document.getElementById("countdown");
+  if (cd) cd.innerText = "Hata oluştu.";
+
+  Swal.fire({
+    icon: "error",
+    title: "Vakitler Alınamadı",
+    text: msg,
+    background: "#0d1b2a",
+    color: "#e0c08d",
+    confirmButtonColor: "#c5a059",
+    confirmButtonText: "Tamam"
+  });
+}
+
+function showTableLoading() {
+  const el = document.getElementById("imsakiyeBody");
+  if (el) el.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-muted"><i class="fas fa-spinner fa-spin me-2"></i>Yükleniyor...</td></tr>`;
+}
+
 function showTableError(msg) {
-  document.getElementById("imsakiyeBody").innerHTML =
-    `<tr><td colspan="7" class="text-center text-danger py-3"><i class="fas fa-exclamation-triangle me-2"></i>${msg}</td></tr>`;
+  const el = document.getElementById("imsakiyeBody");
+  if (el) el.innerHTML = `<tr><td colspan="7" class="text-center text-danger py-3"><i class="fas fa-exclamation-triangle me-2"></i>${msg}</td></tr>`;
 }
 
 /* ─── GÜNLÜK İBADET TAKİBİ ──────────────────────────────── */
@@ -1042,9 +1139,33 @@ function updateCuzProgress(state) {
 
 
 function resetCuz() {
-  if (!confirm("30 Cüz takibini sıfırlamak istediğinizden emin misiniz?")) return;
-  localStorage.removeItem(CUZ_KEY);
-  buildCuzGrid();
+  Swal.fire({
+    title: "Sıfırlansın mı?",
+    text: "30 Cüz takibini sıfırlamak istediğinizden emin misiniz?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Evet, sıfırla",
+    cancelButtonText: "Vazgeç",
+    confirmButtonColor: "#c5a059",
+    cancelButtonColor: "#374151",
+    background: "#0d1b2a",
+    color: "#e0c08d",
+    iconColor: "#f59e0b",
+    customClass: {
+      popup: "swal-ramazan-popup",
+    }
+  }).then(result => {
+    if (result.isConfirmed) {
+      localStorage.removeItem(CUZ_KEY);
+      buildCuzGrid();
+      Swal.fire({
+        toast: true, position: "bottom-end", icon: "success",
+        title: "📄 30 Cüz takibi sıfırlandı.",
+        showConfirmButton: false, timer: 2500, timerProgressBar: true,
+        background: "#0d1b2a", color: "#e0c08d", iconColor: "#c5a059"
+      });
+    }
+  });
 }
 
 /* ─── BİLGİ KARTLARI ──────────────────────────────────────── */
@@ -1390,3 +1511,259 @@ function filterDuaSure(query) {
   );
   renderDuaContent(results.length ? results : [{ icon: "😔", name: "Sonuç bulunamadı", arabic: "", latin: "", meaning: "Arama kriterlerinize uygun dua/sure bulunamadı.", source: "" }]);
 }
+
+/* ─── TOAST BİLDİRİM SİSTEMİ ─────────────────────────────── */
+
+function showToast(message, type = "default", duration = 3500) {
+  const container = document.getElementById("toastContainer");
+  if (!container) return;
+  const icons = { success: "✅", info: "💡", warning: "⚠️", default: "🌙" };
+  const icon = icons[type] || icons.default;
+  const toast = document.createElement("div");
+  toast.className = `toast-item toast-${type}`;
+  toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.classList.add("toast-out");
+    setTimeout(() => toast.remove(), 350);
+  }, duration);
+}
+
+/* ─── AY FAZI HESAPLAYICI ───────────────────────────────── */
+
+function getMoonPhase(date) {
+  const known = new Date(2000, 0, 6);
+  const diff = (date - known) / (1000 * 60 * 60 * 24);
+  const cycle = 29.53058867;
+  const phase = ((diff % cycle) + cycle) % cycle;
+  if (phase < 1.85) return { emoji: "🌑", name: "Yeni Ay" };
+  if (phase < 5.54) return { emoji: "🌒", name: "Hilal" };
+  if (phase < 9.22) return { emoji: "🌓", name: "İlk Dördün" };
+  if (phase < 12.91) return { emoji: "🌔", name: "Şişman Hilal" };
+  if (phase < 16.61) return { emoji: "🌕", name: "Dolunay" };
+  if (phase < 20.30) return { emoji: "🌖", name: "Azalan Dolunay" };
+  if (phase < 23.99) return { emoji: "🌗", name: "Son Dördün" };
+  if (phase < 27.68) return { emoji: "🌘", name: "Azalan Hilal" };
+  return { emoji: "🌑", name: "Yeni Ay" };
+}
+
+function updateMoonPhase() {
+  const moon = getMoonPhase(new Date());
+  const emojiEl = document.getElementById("moonPhaseEmoji");
+  const nameEl = document.getElementById("moonPhaseName");
+  if (emojiEl) emojiEl.textContent = moon.emoji;
+  if (nameEl) nameEl.textContent = moon.name;
+}
+
+/* ─── NAMAZ VAKTİ BİLDİRİM SİSTEMİ ─────────────────────── */
+
+const PRAYER_NAMES_TR = {
+  Fajr: "İmsak", Dhuhr: "Öğle",
+  Asr: "İkindi", Maghrib: "Akşam (İftar)", Isha: "Yatsı"
+};
+
+let prayerNotifyFired = {};
+
+function checkPrayerNotifications() {
+  if (!prayerData) return;
+  const n = new Date();
+  for (const [key, labelTR] of Object.entries(PRAYER_NAMES_TR)) {
+    const pTime = parseTime(prayerData[key]);
+    const diff = pTime - n;
+    const fireKey = `${key}_${n.toDateString()}`;
+    if (prayerNotifyFired[fireKey]) continue;
+    if (diff > 0 && diff <= 5 * 60 * 1000) {
+      prayerNotifyFired[fireKey] = true;
+      const mins = Math.ceil(diff / 60000);
+      showPrayerNotifyBanner(`🕌 ${labelTR} vakti ${mins} dakikaya kaldı!`);
+      sendNotification(`🕌 ${labelTR}`, `Namaz vakti ${mins} dakikaya kaldı.`);
+    }
+  }
+}
+
+function showPrayerNotifyBanner(text) {
+  const panel = document.getElementById("prayerNotifyPanel");
+  const textEl = document.getElementById("prayerNotifyText");
+  if (!panel) return;
+  if (textEl) textEl.textContent = text;
+  panel.classList.add("show");
+  setTimeout(() => panel.classList.remove("show"), 9000);
+}
+
+function dismissPrayerNotify() {
+  const panel = document.getElementById("prayerNotifyPanel");
+  if (panel) panel.classList.remove("show");
+}
+
+/* ─── İFTAR VAKTİ PAYLAŞIMI ─────────────────────────────── */
+
+function shareIftarTime() {
+  const iftarEl = document.getElementById("maghribTime");
+  const iftar = iftarEl ? iftarEl.textContent : "--:--";
+  const text = `🌙 ${activeCity} İftar Vakti: ${iftar}\n\nHayırlı iftarlar! 🤲`;
+  if (navigator.share) {
+    navigator.share({ title: "İftar Vakti", text })
+      .then(() => showToast("Başarıyla paylaşıldı!", "success"))
+      .catch(() => { });
+  } else {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast("İftar vakti panoya kopyalandı! 📋", "info");
+    }).catch(() => {
+      showToast("Paylaşım bu tarayıcıda desteklenmiyor.", "warning");
+    });
+  }
+}
+
+/* ─── RAMAZAN İSTATİSTİKLERİ ────────────────────────────── */
+
+function updateRamadanStats(hijriDay) {
+  const day = parseInt(hijriDay) || 1;
+  const gecen = Math.max(0, day - 1);
+  const kalan = Math.max(0, 30 - day);
+  const state = loadTrackerState();
+  const done = Object.values(state).filter(Boolean).length;
+  const pct = Math.round((done / TRACKER_ITEMS.length) * 100);
+  const cuzState = loadCuzState();
+  const cuzDone = Object.values(cuzState).filter(Boolean).length;
+  const setEl = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+  setEl("statGecen", gecen);
+  setEl("statKalan", kalan);
+  setEl("statIbadet", pct + "%");
+  setEl("statCuz", cuzDone + "/30");
+}
+
+/* ─── HAFTALIK İBADET ÖZETİ ─────────────────────────────── */
+
+const WEEK_DAYS_TR = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
+
+function buildWeeklyGrid() {
+  const grid = document.getElementById("weeklyGrid");
+  if (!grid) return;
+  const today = new Date();
+  let html = "";
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const key = `tracker_${d.getFullYear()}_${d.getMonth() + 1}_${d.getDate()}`;
+    const raw = localStorage.getItem(key);
+    const state = raw ? JSON.parse(raw) : {};
+    const doneCount = Object.values(state).filter(Boolean).length;
+    const total = TRACKER_ITEMS.length;
+    const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0;
+    const barH = Math.max(pct, 4);
+    const dayIdx = d.getDay() === 0 ? 6 : d.getDay() - 1;
+    const dayName = WEEK_DAYS_TR[dayIdx];
+    const isToday = i === 0;
+    html += `
+      <div class="weekly-day-col ${isToday ? "today-col" : ""}">
+        <div class="weekly-day-label">${dayName}</div>
+        <div class="weekly-day-bar-wrap" title="${doneCount}/${total} ibadet">
+          <div class="weekly-day-bar ${isToday ? "today-bar" : ""}" style="height:${barH}%"></div>
+        </div>
+        <div class="weekly-day-score">${doneCount}</div>
+      </div>`;
+  }
+  grid.innerHTML = html;
+}
+
+/* ─── SONRAKİ NAMAZ VAKTİ VURGULAMA ─────────────────────── */
+
+function highlightNextPrayer() {
+  if (!prayerData) return;
+  const n = new Date();
+  const order = ["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"];
+  const idMap = {
+    Fajr: "fajrTime", Sunrise: "sunriseTime", Dhuhr: "dhuhrTime",
+    Asr: "asrTime", Maghrib: "maghribTime", Isha: "ishaTime"
+  };
+  document.querySelectorAll(".time-item").forEach(el => {
+    el.classList.remove("active-time");
+    const b = el.querySelector(".next-badge");
+    if (b) b.remove();
+  });
+  for (const key of order) {
+    const pTime = parseTime(prayerData[key]);
+    if (pTime > n) {
+      const el = document.getElementById(idMap[key]);
+      if (el) {
+        const wrap = el.closest(".time-item");
+        if (wrap) {
+          wrap.classList.add("active-time");
+          const badge = document.createElement("span");
+          badge.className = "next-badge";
+          badge.textContent = "Sonraki";
+          el.after(badge);
+        }
+      }
+      break;
+    }
+  }
+}
+
+/* ─── SCROLL TO TOP ──────────────────────────────────────── */
+
+window.addEventListener("scroll", () => {
+  const btn = document.getElementById("scrollTopBtn");
+  if (btn) {
+    if (window.scrollY > 400) btn.classList.add("visible");
+    else btn.classList.remove("visible");
+  }
+});
+
+/* ─── YENİ ÖZELLİKLER BAŞLANGIÇ ───────────────────────────  */
+
+document.addEventListener("DOMContentLoaded", () => {
+  updateMoonPhase();
+  buildWeeklyGrid();
+
+  // Hava durumunu yükle
+  const city = localStorage.getItem("savedCity") || "Istanbul";
+  loadWeather(city);
+
+  // Namaz vakti bildirimleri — her 30 saniyede bir kontrol
+  setInterval(checkPrayerNotifications, 30000);
+
+  // Hoş Geldin Resimli Modal (oturum başında bir kere)
+  if (!sessionStorage.getItem("welcomed")) {
+    sessionStorage.setItem("welcomed", "1");
+    setTimeout(showWelcomeImage, 1000);
+  }
+});
+
+function showWelcomeImage() {
+  const quotes = [
+    "“Oruç tutunuz ki sıhhat bulasınız.” — Hadis-i Şerif",
+    "“Ramazan ayı, insanlara yol gösterici, doğrunun ve hakla bâtılı ayırmanın açık delilleri olarak Kur’an’ın indirildiği aydır.” — Bakara 185",
+    "“Kim inanarak ve sevabını Allah’tan umarak Ramazan orucunu tutarsa, geçmiş günahları affedilir.” — Hadis-i Şerif",
+    "“Ramazan bereket ayıdır. Allah bu ayda günahları bağışlar, duaları kabul eder.” — Hadis-i Şerif",
+    "“Gerçek oruç, sadece yiyip içmeyi değil, boş ve hayâsızca sözleri de terk etmektir.” — Hadis-i Şerif"
+  ];
+  const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+
+  Swal.fire({
+    html: `
+      <div class="welcome-img-container">
+        <div class="welcome-text-overlay">Hayırlı İftarlar</div>
+        <img src="resim.png" alt="Ramazan">
+        <div class="welcome-daily-content">
+          <div class="welcome-daily-label">Günün Mesajı</div>
+          <p class="welcome-daily-text">${randomQuote}</p>
+        </div>
+      </div>
+    `,
+    showConfirmButton: false,
+    showCloseButton: true,
+    timer: 10000,
+    timerProgressBar: true,
+    background: 'transparent',
+    backdrop: 'rgba(0,0,0,0.9)',
+    showClass: {
+      popup: 'swal-drop-down'
+    },
+    position: 'center',
+    width: 'min(95vw, 1000px)',
+    padding: '0'
+  });
+}
+
+
